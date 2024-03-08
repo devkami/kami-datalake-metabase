@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: metabase_postgres
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - proxy
+  
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3000:3000"
+    networks:
+      - proxy
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=${POSTGRES_DB}
+      - MB_DB_PORT=5432
+      - MB_DB_USER=${POSTGRES_USER}
+      - MB_DB_PASS=${POSTGRES_PASSWORD}
+      - MB_DB_HOST=postgres      
+    volumes:
+      - ./metabase-data:/metabase-data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kami-metabase.rule=Host(`metabase.kamico.com.br`)"
+      - "traefik.http.routers.kami-metabase.entrypoints=websecure"
+      - "traefik.http.routers.kami-metabase.tls.certresolver=myresolver"
+    depends_on:
+      - postgres
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  postgres-data:
