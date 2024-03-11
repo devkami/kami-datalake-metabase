@@ -34,6 +34,9 @@ services:
       - "traefik.http.routers.kami-metabase.rule=Host(`metabase.kamico.com.br`)"
       - "traefik.http.routers.kami-metabase.entrypoints=websecure"
       - "traefik.http.routers.kami-metabase.tls.certresolver=myresolver"
+      - "traefik.http.routers.kami-metabase-www.rule=Host(`www.metabase.kamico.com.br`)"
+      - "traefik.http.routers.kami-metabase-www.entrypoints=websecure"
+      - "traefik.http.routers.kami-metabase-www.tls.certresolver=myresolver"
     depends_on:
       - postgres
 
